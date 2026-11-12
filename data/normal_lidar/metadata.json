@@ -1,0 +1,5 @@
+{
+  "n_episodes": 200,
+  "n_samples": 31149,
+  "lidar_rays": 36
+}

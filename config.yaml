@@ -1,0 +1,116 @@
+################################################################################
+# ULHN - Uncertainty-aware Learning Navigation
+# config.yaml  — Centralised parameter file (no hardcoded constants in code)
+################################################################################
+
+# ---------------------------------------------------------------------------
+# Environment
+# ---------------------------------------------------------------------------
+environment:
+  world_width: 10.0 # metres
+  world_height: 10.0 # metres
+  timestep: 0.1 # seconds per step
+  max_episode_steps: 1000
+  seed: 36
+
+# ---------------------------------------------------------------------------
+# Robot
+# ---------------------------------------------------------------------------
+robot:
+  radius: 0.1 # metres
+  max_linear_velocity: 0.9 # m/s
+  max_angular_velocity: 1.8 # rad/s
+
+# ---------------------------------------------------------------------------
+# LiDAR
+# ---------------------------------------------------------------------------
+lidar:
+  num_rays: 36
+  fov_deg: 360.0
+  max_range: 10.0 # metres
+  noise_enabled: false
+  noise_std: 0.01 # fraction of max_range
+
+# ---------------------------------------------------------------------------
+# Scenarios
+# ---------------------------------------------------------------------------
+scenario:
+  num_static_min: 3
+  num_static_max: 8
+  min_goal_distance: 4.0 # metres
+
+# ---------------------------------------------------------------------------
+# Reward function
+# ---------------------------------------------------------------------------
+reward:
+  goal_bonus: 100.0
+  collision_penalty: -50.0
+  progress_scale: 10.0
+  jerk_penalty: 0.1
+  proximity_penalty: 0.2
+  proximity_radius: 1.2 # metres — start penalising below this
+
+# ---------------------------------------------------------------------------
+# PPO Training (Phase 4)
+# ---------------------------------------------------------------------------
+training:
+  total_timesteps: 100000
+  n_envs: 4
+  learning_rate: 3.0e-4
+  batch_size: 64
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  net_arch: [256, 256]
+  activation_fn: "tanh"
+  seed: 49
+  log_dir: "logs/ppo"
+  model_dir: "models/ppo"
+
+# ---------------------------------------------------------------------------
+# Autoencoder Watchdog (Phases 7–8)
+# ---------------------------------------------------------------------------
+watchdog:
+  hidden_dim: 16
+  latent_dim: 8
+  learning_rate: 1.0e-3
+  batch_size: 256
+  epochs: 50
+  dataset_dir: "data/normal_lidar"
+  model_dir: "models/autoencoder"
+  threshold_percentile: 99.0 # forward-sector cutoff with low sustained clean-data alarms
+  forward_sector_fraction: 0.5 # watchdog uses the forward-facing half of the scan
+  smoothing_window: 5 # steps to average before OOD declaration
+
+# ---------------------------------------------------------------------------
+# Safety Controller (Phases 9–10)
+# ---------------------------------------------------------------------------
+safety:
+  critical_distance: 0.15 # metres — trigger STOP (robot r=0.3m, so ~touching)
+  slowdown_distance: 0.5 # metres — trigger SLOWDOWN
+  slowdown_factor: 0.5 # velocity multiplier
+  recovery_speed: 0.5 # m/s for REORIENT rotation
+  resume_consecutive: 10 # consecutive normal steps before RESUME->NORMAL
+  stop_hold_steps: 5 # steps to hold STOP before REORIENT
+  stop_requires_ood: true # proximity STOP only fires when OOD also active
+  ood_confirmation_steps: 3 # consecutive above-threshold readings before recovery
+
+# ---------------------------------------------------------------------------
+# Experiments (Phases 12–13)
+# ---------------------------------------------------------------------------
+experiment:
+  num_eval_episodes: 50
+  demo_disturbance_start_step: 100
+  disturbance_noise_std: 0.15
+  disturbance_missing_fraction: 0.30
+  disturbance_sector_width: 9
+  results_dir: "results"
+
+# ---------------------------------------------------------------------------
+# Visualisation / Dashboard (Phase 14)
+# ---------------------------------------------------------------------------
+visualization:
+  render_fps: 60
+  theme: "dark"

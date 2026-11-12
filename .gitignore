@@ -1,0 +1,41 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Models (large binary files)
+models/ppo/*.zip
+models/autoencoder/*.pt
+models/autoencoder/*.pth
+
+# Data
+data/normal_lidar/*.npy
+data/normal_lidar/*.npz
+
+# Results & logs
+logs/
+results/figures/*.png
+results/metrics/*.csv
+results/metrics/*.json
+results/experiment_logs/*.jsonl
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
